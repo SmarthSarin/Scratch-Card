@@ -6,7 +6,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Farewell Scratch Cards</title>
 
-
 <style>
   body {
     margin: 0;
@@ -23,6 +22,7 @@
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+    overflow-x: hidden;
   }
 
   h1 {
@@ -44,7 +44,6 @@
     padding: 0 10px;
   }
 
-  /* Added hover-enabled class for hover effects */
   .scratch-card {
     position: relative;
     width: min(40vw, 450px);
@@ -60,6 +59,7 @@
       inset 0 -5px 14px rgba(0, 0, 0, 0.55);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
+
   .hover-enabled:hover {
     transform: translateY(-10px) scale(1.03);
     box-shadow:
@@ -67,7 +67,6 @@
       inset 0 3px 10px rgba(255, 255, 255, 0.3),
       inset 0 -6px 14px rgba(0, 0, 0, 0.65);
   }
-  /* Disable hover effects by removing hover-enabled class */
 
   .card-img {
     width: 100%;
@@ -135,6 +134,13 @@
     width: 100%;
     height: 100%;
     z-index: 999;
+  }
+
+  @media (max-width: 700px) {
+    .cards-container {
+      grid-template-columns: 1fr;
+      gap: 30px;
+    }
   }
 </style>
 </head>
@@ -226,7 +232,7 @@ function getAverageColor(img, callback) {
 
 function createScratchCard({ text, img }) {
   const card = document.createElement("div");
-  card.className = "scratch-card hover-enabled";  // Add hover-enabled class initially
+  card.className = "scratch-card hover-enabled";  
   card.innerHTML = `
     <img src="${img}" class="card-img" alt="Card image"/>
     <div class="scratch-text">✨ Scratch Me ✨</div>
@@ -251,6 +257,11 @@ function createScratchCard({ text, img }) {
   const ctx = canvas.getContext("2d");
   canvas.width = card.offsetWidth;
   canvas.height = card.offsetHeight;
+
+  // Prevent screen scrolling while scratching on mobile
+  ["touchstart", "touchmove"].forEach(evt =>
+    canvas.addEventListener(evt, e => e.preventDefault(), { passive: false })
+  );
 
   const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
   gradient.addColorStop(0, "#2c3e50");
@@ -295,8 +306,6 @@ function createScratchCard({ text, img }) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const rect = card.getBoundingClientRect();
       confetti.create(rect.left + card.offsetWidth / 2, rect.top + card.offsetHeight / 2);
-
-      // Remove hover-enabled class to disable hover effect
       card.classList.remove("hover-enabled");
     }
   }
