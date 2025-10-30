@@ -240,83 +240,106 @@
     }
 
     function createScratchCard({ text, img }) {
-      const card = document.createElement("div");
-      card.className = "scratch-card hover-enabled";
-      card.innerHTML = `
-        <img src="${img}" class="card-img" alt="Card image"/>
-        <div class="scratch-text">✨ Scratch Me ✨</div>
-        <div class="prize">${text}</div>
-        <canvas></canvas>
+  const card = document.createElement("div");
+  card.className = "scratch-card hover-enabled";
+  card.innerHTML = `
+    <img src="${img}" class="card-img" alt="Card image"/>
+    <div class="scratch-text">✨ Scratch Me ✨</div>
+    <div class="prize">${text}</div>
+    <canvas></canvas>
+  `;
+  container.appendChild(card);
+
+  const scratchText = card.querySelector(".scratch-text");
+  const cardImg = card.querySelector(".card-img");
+  const canvas = card.querySelector("canvas");
+  const ctx = canvas.getContext("2d");
+
+  // ✅ Adaptive and soft shadow based on image color
+  const tempImg = new Image();
+  tempImg.crossOrigin = "Anonymous";
+  tempImg.src = img;
+  getAverageColor(tempImg, (avg) => {
+    const rgb = avg.match(/\d+/g);
+    if (rgb) {
+      // Calculate brightness for adaptive softness
+      const brightness = (parseInt(rgb[0]) * 0.299 + parseInt(rgb[1]) * 0.587 + parseInt(rgb[2]) * 0.114) / 255;
+      const alpha = 0.25 + (1 - brightness) * 0.15; // darker = slightly stronger shadow
+      card.style.setProperty("--shadow-color-rgb", `${rgb[0]}, ${rgb[1]}, ${rgb[2]}`);
+      card.style.boxShadow = `
+        0 25px 40px rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${alpha}),
+        inset 0 3px 8px rgba(255, 255, 255, 0.15),
+        inset 0 -5px 14px rgba(0, 0, 0, 0.35)
       `;
-      container.appendChild(card);
-
-      const scratchText = card.querySelector(".scratch-text");
-      const canvas = card.querySelector("canvas");
-      const ctx = canvas.getContext("2d");
-
-      canvas.width = card.offsetWidth;
-      canvas.height = card.offsetHeight;
-
-      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-      gradient.addColorStop(0, "#2c3e50");
-      gradient.addColorStop(1, "#4ca1af");
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      ctx.globalCompositeOperation = "destination-out";
-      ctx.lineCap = "round";
-      ctx.lineJoin = "round";
-      ctx.lineWidth = 40;
-
-      let drawing = false, revealed = false;
-
-      const getXY = e => {
-        const rect = canvas.getBoundingClientRect();
-        return {
-          x: (e.touches ? e.touches[0].clientX : e.clientX) - rect.left,
-          y: (e.touches ? e.touches[0].clientY : e.clientY) - rect.top
-        };
-      };
-
-      function draw(e) {
-        if (!drawing || revealed) return;
-        e.preventDefault(); // ✅ Stops screen movement
-        const { x, y } = getXY(e);
-        ctx.lineTo(x, y);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(x, y);
-        checkReveal();
-      }
-
-      function checkReveal() {
-        const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-        let cleared = 0;
-        for (let i = 3; i < pixels.length; i += 4) if (pixels[i] === 0) cleared++;
-        const percent = cleared / (canvas.width * canvas.height) * 100;
-        if (percent > 45 && !revealed) {
-          revealed = true;
-          card.querySelector(".prize").classList.add("revealed");
-          scratchText.style.display = "none";
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          const rect = card.getBoundingClientRect();
-          confetti.create(rect.left + card.offsetWidth / 2, rect.top + card.offsetHeight / 2);
-          card.classList.remove("hover-enabled");
-        }
-      }
-
-      ["mousedown", "touchstart"].forEach(evt =>
-        canvas.addEventListener(evt, e => {
-          drawing = true;
-          ctx.beginPath();
-          draw(e);
-        })
-      );
-      ["mousemove", "touchmove"].forEach(evt => canvas.addEventListener(evt, draw, { passive: false }));
-      ["mouseup", "mouseleave", "touchend"].forEach(evt => (drawing = false));
     }
+  });
+
+  // Canvas setup
+  canvas.width = card.offsetWidth;
+  canvas.height = card.offsetHeight;
+
+  const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+  gradient.addColorStop(0, "#2c3e50");
+  gradient.addColorStop(1, "#4ca1af");
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.globalCompositeOperation = "destination-out";
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  ctx.lineWidth = 40;
+
+  let drawing = false, revealed = false;
+
+  const getXY = e => {
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: (e.touches ? e.touches[0].clientX : e.clientX) - rect.left,
+      y: (e.touches ? e.touches[0].clientY : e.clientY) - rect.top
+    };
+  };
+
+  function draw(e) {
+    if (!drawing || revealed) return;
+    e.preventDefault();
+    const { x, y } = getXY(e);
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    checkReveal();
+  }
+
+  function checkReveal() {
+    const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+    let cleared = 0;
+    for (let i = 3; i < pixels.length; i += 4) if (pixels[i] === 0) cleared++;
+    const percent = cleared / (canvas.width * canvas.height) * 100;
+    if (percent > 45 && !revealed) {
+      revealed = true;
+      card.querySelector(".prize").classList.add("revealed");
+      scratchText.style.display = "none";
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const rect = card.getBoundingClientRect();
+      confetti.create(rect.left + card.offsetWidth / 2, rect.top + card.offsetHeight / 2);
+      card.classList.remove("hover-enabled");
+    }
+  }
+
+  ["mousedown", "touchstart"].forEach(evt =>
+    canvas.addEventListener(evt, e => {
+      drawing = true;
+      ctx.beginPath();
+      draw(e);
+    })
+  );
+  ["mousemove", "touchmove"].forEach(evt => canvas.addEventListener(evt, draw, { passive: false }));
+  ["mouseup", "mouseleave", "touchend"].forEach(evt => (drawing = false));
+}
+
 
     cardData.forEach(createScratchCard);
   </script>
 </body>
 </html>
+
