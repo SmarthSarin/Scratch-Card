@@ -22,6 +22,7 @@
       -webkit-user-select: none;
       -moz-user-select: none;
       -ms-user-select: none;
+      touch-action: manipulation;
     }
 
     h1 {
@@ -40,7 +41,7 @@
       align-items: center;
       width: 100%;
       max-width: 1000px;
-      padding: 0 10px 80px; /* extra space for scroll in mobile */
+      padding: 0 10px 80px;
     }
 
     .scratch-card {
@@ -57,6 +58,7 @@
         inset 0 3px 8px rgba(255, 255, 255, 0.25),
         inset 0 -5px 14px rgba(0, 0, 0, 0.55);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
+      touch-action: none; /* 💡 Prevents screen shake while scratching */
     }
 
     .hover-enabled:hover {
@@ -248,20 +250,10 @@
       `;
       container.appendChild(card);
 
-      const cardImg = card.querySelector(".card-img");
       const scratchText = card.querySelector(".scratch-text");
-
-      const imgEl = new Image();
-      imgEl.src = img;
-      getAverageColor(imgEl, color => {
-        scratchText.style.textShadow = `0 0 15px ${color}, 0 0 30px ${color}`;
-        scratchText.style.color = color;
-        const rgbValues = color.match(/\(([^)]+)\)/)[1];
-        card.style.setProperty('--shadow-color-rgb', rgbValues);
-      });
-
       const canvas = card.querySelector("canvas");
       const ctx = canvas.getContext("2d");
+
       canvas.width = card.offsetWidth;
       canvas.height = card.offsetHeight;
 
@@ -288,6 +280,7 @@
 
       function draw(e) {
         if (!drawing || revealed) return;
+        e.preventDefault(); // ✅ Stops screen movement
         const { x, y } = getXY(e);
         ctx.lineTo(x, y);
         ctx.stroke();
@@ -301,7 +294,6 @@
         let cleared = 0;
         for (let i = 3; i < pixels.length; i += 4) if (pixels[i] === 0) cleared++;
         const percent = cleared / (canvas.width * canvas.height) * 100;
-
         if (percent > 45 && !revealed) {
           revealed = true;
           card.querySelector(".prize").classList.add("revealed");
@@ -320,8 +312,7 @@
           draw(e);
         })
       );
-
-      ["mousemove", "touchmove"].forEach(evt => canvas.addEventListener(evt, draw));
+      ["mousemove", "touchmove"].forEach(evt => canvas.addEventListener(evt, draw, { passive: false }));
       ["mouseup", "mouseleave", "touchend"].forEach(evt => (drawing = false));
     }
 
