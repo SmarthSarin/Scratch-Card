@@ -2,320 +2,330 @@
 <html lang="en">
 <head>
   <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;700&display=swap" rel="stylesheet">
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Farewell Scratch Cards</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Farewell Scratch Cards</title>
 
-<style>
-  body {
-    margin: 0;
-    padding: 10px; 
-    font-family: "Poppins", sans-serif;
-    color: #fff;
-    background: url('https://www.freevector.com/uploads/vector/preview/30347/Creative_Geometric_Background.jpg') no-repeat center/cover fixed;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    min-height: 100vh;
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    overflow-x: hidden;
-  }
+  <style>
+    body {
+      margin: 0;
+      padding: 10px;
+      font-family: "Poppins", sans-serif;
+      color: #fff;
+      background: url('https://www.freevector.com/uploads/vector/preview/30347/Creative_Geometric_Background.jpg') no-repeat center/cover fixed;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+    }
 
-  h1 {
-    color: #efc41a;
-    text-shadow: 0 0 15px rgba(122, 100, 12, 0.9);
-    font-size: clamp(2rem, 5vw, 3rem);
-    margin: 20px 0 30px;
-    text-align: center;
-  }
+    h1 {
+      color: #efc41a;
+      text-shadow: 0 0 15px rgba(122, 100, 12, 0.9);
+      font-size: clamp(2rem, 3vw, 3rem);
+      margin-bottom: 30px;
+      text-align: center;
+    }
 
-  .cards-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 30px;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    max-width: 1100px;
-    padding: 0 10px 60px;
-    box-sizing: border-box;
-  }
+    .cards-container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 50px;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      max-width: 1000px;
+      padding: 0 10px 80px; /* extra space for scroll in mobile */
+    }
 
-  .scratch-card {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 1.4 / 1;
-    border-radius: 25px;
-    overflow: hidden;
-    cursor: pointer;
-    background: linear-gradient(145deg, #0a2749, #0e426d);
-    --shadow-color-rgb: 0, 0, 0; 
-    box-shadow:
-      0 15px 30px rgba(var(--shadow-color-rgb), 0.45),
-      inset 0 3px 8px rgba(255, 255, 255, 0.25),
-      inset 0 -5px 14px rgba(0, 0, 0, 0.55);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
+    .scratch-card {
+      position: relative;
+      width: min(40vw, 450px);
+      height: min(30vw, 300px);
+      border-radius: 25px;
+      overflow: hidden;
+      cursor: pointer;
+      background: linear-gradient(145deg, #0a2749, #0e426d);
+      --shadow-color-rgb: 0, 0, 0;
+      box-shadow:
+        0 25px 40px rgba(var(--shadow-color-rgb), 0.45),
+        inset 0 3px 8px rgba(255, 255, 255, 0.25),
+        inset 0 -5px 14px rgba(0, 0, 0, 0.55);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
 
-  .hover-enabled:hover {
-    transform: translateY(-8px) scale(1.03);
-    box-shadow:
-      0 25px 40px rgba(var(--shadow-color-rgb), 0.6),
-      inset 0 3px 10px rgba(255, 255, 255, 0.3),
-      inset 0 -6px 14px rgba(0, 0, 0, 0.65);
-  }
+    .hover-enabled:hover {
+      transform: translateY(-10px) scale(1.03);
+      box-shadow:
+        0 35px 50px rgba(var(--shadow-color-rgb), 0.6),
+        inset 0 3px 10px rgba(255, 255, 255, 0.3),
+        inset 0 -6px 14px rgba(0, 0, 0, 0.65);
+    }
 
-  .card-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 25px;
-    filter: brightness(0.7);
-  }
+    .card-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 25px;
+      filter: brightness(0.7);
+    }
 
-  .prize {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    text-align: center;
-    font-size: clamp(1rem, 4vw, 1.4rem);
-    font-weight: 600;
-    color: #000;
-    background: rgba(255, 255, 255, 0.3);
-    backdrop-filter: blur(6px);
-    border-radius: 25px;
-    opacity: 0;
-    transform: scale(0.9);
-    transition: opacity 0.8s ease, transform 0.6s ease;
-  }
+    .prize {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      text-align: center;
+      font-size: clamp(1rem, 2.5vw, 1.6rem);
+      font-weight: 600;
+      color: #000;
+      background: rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(6px);
+      border-radius: 25px;
+      opacity: 0;
+      transform: scale(0.9);
+      transition: opacity 0.8s ease, transform 0.6s ease;
+    }
 
-  .prize.revealed {
-    opacity: 1;
-    transform: scale(1);
-  }
+    .prize.revealed {
+      opacity: 1;
+      transform: scale(1);
+    }
 
-  .scratch-text {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: clamp(1.2rem, 6vw, 1.5rem); 
-    font-weight: 400;
-    color: rgba(255,255,255,0.95);
-    text-shadow: 0 0 8px rgba(255,255,255,0.8);
-    letter-spacing: 0.5px;
-    z-index: 5;
-    pointer-events: none;
-    animation: pulse 3.5s infinite;
-    transition: text-shadow 0.5s ease, color 0.5s ease;
-  }
+    .scratch-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: clamp(1.5rem, 8vw, 1.5rem);
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.95);
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+      letter-spacing: 0.5px;
+      z-index: 5;
+      pointer-events: none;
+      animation: pulse 3.5s infinite;
+      transition: text-shadow 0.5s ease, color 0.5s ease;
+    }
 
-  @keyframes pulse {
-    0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-    50% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.05); }
-  }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      50% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.05); }
+    }
 
-  canvas {
-    position: absolute;
-    inset: 0;
-    border-radius: 25px;
-  }
+    canvas {
+      position: absolute;
+      inset: 0;
+      border-radius: 25px;
+    }
 
-  #confetti {
-    position: fixed;
-    pointer-events: none;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 999;
-  }
-</style>
+    #confetti {
+      position: fixed;
+      pointer-events: none;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 999;
+    }
+
+    /* 📱 Mobile Layout */
+    @media (max-width: 768px) {
+      body {
+        justify-content: flex-start;
+      }
+      .cards-container {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        padding-bottom: 100px;
+      }
+      .scratch-card {
+        width: 90vw;
+        height: 250px;
+      }
+    }
+  </style>
 </head>
 <body>
 
-<h1>🎉 Farewell Scratch Cards 🎉</h1>
+  <h1>🎉 Farewell Scratch Cards 🎉</h1>
+  <div class="cards-container" id="cards-container"></div>
+  <canvas id="confetti"></canvas>
 
-<div class="cards-container" id="cards-container"></div>
-<canvas id="confetti"></canvas>
+  <script>
+    const cardData = [
+      { text: "🎁 ₹500 Gift Voucher", img: "https://gallery.yopriceville.com/var/albums/Backgrounds/Hearts_Background-968968755.jpg?m=1629744305" },
+      { text: "☕ Coffee with Team", img: "https://static.vecteezy.com/system/resources/thumbnails/004/962/719/small_2x/sweet-chocolate-background-free-vector.jpg" },
+      { text: "🌟 You are a Rockstar!", img: "https://thumbs.dreamstime.com/b/money-background-close-up-lots-new-us-dollar-bills-58726548.jpg" },
+      { text: "❤️ Wishing you all the best on your new journey ahead!", img: "https://thumbs.dreamstime.com/b/graffiti-seamless-pattern-girlish-doodles-style-vector-background-childish-girl-power-crazy-elements-trendy-linear-collage-100448586.jpg" }
+    ];
 
-<script>
-const cardData = [
-  { text: "🎁 ₹500 Gift Voucher", img: "https://gallery.yopriceville.com/var/albums/Backgrounds/Hearts_Background-968968755.jpg?m=1629744305" },
-  { text: "☕ Coffee with Team", img: "https://static.vecteezy.com/system/resources/thumbnails/004/962/719/small_2x/sweet-chocolate-background-free-vector.jpg" },
-  { text: "🌟 You are a Rockstar!", img: "https://thumbs.dreamstime.com/b/money-background-close-up-lots-new-us-dollar-bills-58726548.jpg" },
-  { text: "❤️ Wishing you all the best on your new journey ahead!", img: "https://thumbs.dreamstime.com/b/graffiti-seamless-pattern-girlish-doodles-style-vector-background-childish-girl-power-crazy-elements-trendy-linear-collage-100448586.jpg" }
-];
+    const container = document.getElementById("cards-container");
 
-const container = document.getElementById("cards-container");
+    class Confetti {
+      constructor(ctx) {
+        this.ctx = ctx;
+        this.particles = [];
+      }
+      create(x, y) {
+        for (let i = 0; i < 120; i++) {
+          this.particles.push({
+            x, y,
+            size: Math.random() * 6 + 2,
+            speedX: Math.random() * 4 - 2,
+            speedY: Math.random() * -6 - 3,
+            gravity: 0.15,
+            color: `hsl(${Math.random() * 360}, 70%, 60%)`,
+            rotation: Math.random() * 360,
+            rotationSpeed: Math.random() * 6 - 3
+          });
+        }
+        this.animate();
+      }
+      animate() {
+        this.ctx.clearRect(0, 0, innerWidth, innerHeight);
+        this.particles.forEach((p, i) => {
+          p.x += p.speedX;
+          p.y += p.speedY;
+          p.speedY += p.gravity;
+          p.rotation += p.rotationSpeed;
 
-class Confetti {
-  constructor(ctx) {
-    this.ctx = ctx;
-    this.particles = [];
-  }
-  create(x, y) {
-    for (let i = 0; i < 120; i++) {
-      this.particles.push({
-        x, y,
-        size: Math.random() * 6 + 2,
-        speedX: Math.random() * 4 - 2,
-        speedY: Math.random() * -6 - 3,
-        gravity: 0.15,
-        color: `hsl(${Math.random() * 360}, 70%, 60%)`,
-        rotation: Math.random() * 360,
-        rotationSpeed: Math.random() * 6 - 3
-      });
+          this.ctx.save();
+          this.ctx.translate(p.x, p.y);
+          this.ctx.rotate(p.rotation * Math.PI / 180);
+          this.ctx.fillStyle = p.color;
+          this.ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+          this.ctx.restore();
+
+          if (p.y > innerHeight + p.size) this.particles.splice(i, 1);
+        });
+        if (this.particles.length) requestAnimationFrame(() => this.animate());
+      }
     }
-    this.animate();
-  }
-  animate() {
-    this.ctx.clearRect(0, 0, innerWidth, innerHeight);
-    this.particles.forEach((p, i) => {
-      p.x += p.speedX;
-      p.y += p.speedY;
-      p.speedY += p.gravity;
-      p.rotation += p.rotationSpeed;
 
-      this.ctx.save();
-      this.ctx.translate(p.x, p.y);
-      this.ctx.rotate(p.rotation * Math.PI / 180);
-      this.ctx.fillStyle = p.color;
-      this.ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
-      this.ctx.restore();
-
-      if (p.y > innerHeight + p.size) this.particles.splice(i, 1);
+    const confetti = new Confetti(document.getElementById("confetti").getContext("2d"));
+    confetti.ctx.canvas.width = innerWidth;
+    confetti.ctx.canvas.height = innerHeight;
+    window.addEventListener("resize", () => {
+      confetti.ctx.canvas.width = innerWidth;
+      confetti.ctx.canvas.height = innerHeight;
     });
-    if (this.particles.length) requestAnimationFrame(() => this.animate());
-  }
-}
 
-const confetti = new Confetti(document.getElementById("confetti").getContext("2d"));
-window.addEventListener("resize", () => {
-  confetti.ctx.canvas.width = innerWidth;
-  confetti.ctx.canvas.height = innerHeight;
-});
-confetti.ctx.canvas.width = innerWidth;
-confetti.ctx.canvas.height = innerHeight;
-
-function getAverageColor(img, callback) {
-  const tempCanvas = document.createElement("canvas");
-  const ctx = tempCanvas.getContext("2d");
-  tempCanvas.width = tempCanvas.height = 50;
-  img.crossOrigin = "Anonymous";
-  img.onload = () => {
-    ctx.drawImage(img, 0, 0, 50, 50);
-    const data = ctx.getImageData(0, 0, 50, 50).data;
-    let r = 0, g = 0, b = 0, count = 0;
-    for (let i = 0; i < data.length; i += 4) {
-      r += data[i];
-      g += data[i + 1];
-      b += data[i + 2];
-      count++;
+    function getAverageColor(img, callback) {
+      const tempCanvas = document.createElement("canvas");
+      const ctx = tempCanvas.getContext("2d");
+      tempCanvas.width = tempCanvas.height = 50;
+      img.crossOrigin = "Anonymous";
+      img.onload = () => {
+        ctx.drawImage(img, 0, 0, 50, 50);
+        const data = ctx.getImageData(0, 0, 50, 50).data;
+        let r = 0, g = 0, b = 0, count = 0;
+        for (let i = 0; i < data.length; i += 4) {
+          r += data[i];
+          g += data[i + 1];
+          b += data[i + 2];
+          count++;
+        }
+        const avg = `rgb(${Math.round(r / count)}, ${Math.round(g / count)}, ${Math.round(b / count)})`;
+        callback(avg);
+      };
     }
-    const avg = `rgb(${Math.round(r / count)}, ${Math.round(g / count)}, ${Math.round(b / count)})`;
-    callback(avg);
-  };
-}
 
-function createScratchCard({ text, img }) {
-  const card = document.createElement("div");
-  card.className = "scratch-card hover-enabled";  
-  card.innerHTML = `
-    <img src="${img}" class="card-img" alt="Card image"/>
-    <div class="scratch-text">Scratch Me ✨</div>
-    <div class="prize">${text}</div>
-    <canvas></canvas>
-  `;
-  container.appendChild(card);
+    function createScratchCard({ text, img }) {
+      const card = document.createElement("div");
+      card.className = "scratch-card hover-enabled";
+      card.innerHTML = `
+        <img src="${img}" class="card-img" alt="Card image"/>
+        <div class="scratch-text">✨ Scratch Me ✨</div>
+        <div class="prize">${text}</div>
+        <canvas></canvas>
+      `;
+      container.appendChild(card);
 
-  const scratchText = card.querySelector(".scratch-text");
+      const cardImg = card.querySelector(".card-img");
+      const scratchText = card.querySelector(".scratch-text");
 
-  const imgEl = new Image();
-  imgEl.src = img;
-  getAverageColor(imgEl, color => {
-    scratchText.style.textShadow = `0 0 15px ${color}, 0 0 30px ${color}`;
-    scratchText.style.color = color;
-    const rgbValues = color.match(/\(([^)]+)\)/)[1];
-    card.style.setProperty('--shadow-color-rgb', rgbValues);
-  });
+      const imgEl = new Image();
+      imgEl.src = img;
+      getAverageColor(imgEl, color => {
+        scratchText.style.textShadow = `0 0 15px ${color}, 0 0 30px ${color}`;
+        scratchText.style.color = color;
+        const rgbValues = color.match(/\(([^)]+)\)/)[1];
+        card.style.setProperty('--shadow-color-rgb', rgbValues);
+      });
 
-  const canvas = card.querySelector("canvas");
-  const ctx = canvas.getContext("2d");
-  canvas.width = card.offsetWidth;
-  canvas.height = card.offsetHeight;
+      const canvas = card.querySelector("canvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = card.offsetWidth;
+      canvas.height = card.offsetHeight;
 
-  // Prevent screen scroll on touch
-  ["touchstart", "touchmove"].forEach(evt =>
-    canvas.addEventListener(evt, e => e.preventDefault(), { passive: false })
-  );
+      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+      gradient.addColorStop(0, "#2c3e50");
+      gradient.addColorStop(1, "#4ca1af");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-  gradient.addColorStop(0, "#2c3e50");
-  gradient.addColorStop(1, "#4ca1af");
-  ctx.fillStyle = gradient;
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.globalCompositeOperation = "destination-out";
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.lineWidth = 40;
 
-  ctx.globalCompositeOperation = "destination-out";
-  ctx.lineCap = "round";
-  ctx.lineJoin = "round";
-  ctx.lineWidth = 40;
+      let drawing = false, revealed = false;
 
-  let drawing = false, revealed = false;
-  const getXY = e => {
-    const rect = canvas.getBoundingClientRect();
-    return {
-      x: (e.touches ? e.touches[0].clientX : e.clientX) - rect.left,
-      y: (e.touches ? e.touches[0].clientY : e.clientY) - rect.top
-    };
-  };
+      const getXY = e => {
+        const rect = canvas.getBoundingClientRect();
+        return {
+          x: (e.touches ? e.touches[0].clientX : e.clientX) - rect.left,
+          y: (e.touches ? e.touches[0].clientY : e.clientY) - rect.top
+        };
+      };
 
-  function draw(e) {
-    if (!drawing || revealed) return;
-    const { x, y } = getXY(e);
-    ctx.lineTo(x, y);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    checkReveal();
-  }
+      function draw(e) {
+        if (!drawing || revealed) return;
+        const { x, y } = getXY(e);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        checkReveal();
+      }
 
-  function checkReveal() {
-    const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-    let cleared = 0;
-    for (let i = 3; i < pixels.length; i += 4) if (pixels[i] === 0) cleared++;
-    const percent = cleared / (canvas.width * canvas.height) * 100;
+      function checkReveal() {
+        const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+        let cleared = 0;
+        for (let i = 3; i < pixels.length; i += 4) if (pixels[i] === 0) cleared++;
+        const percent = cleared / (canvas.width * canvas.height) * 100;
 
-    if (percent > 45 && !revealed) {
-      revealed = true;
-      card.querySelector(".prize").classList.add("revealed");
-      scratchText.style.display = "none";
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const rect = card.getBoundingClientRect();
-      confetti.create(rect.left + card.offsetWidth / 2, rect.top + card.offsetHeight / 2);
-      card.classList.remove("hover-enabled");
+        if (percent > 45 && !revealed) {
+          revealed = true;
+          card.querySelector(".prize").classList.add("revealed");
+          scratchText.style.display = "none";
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          const rect = card.getBoundingClientRect();
+          confetti.create(rect.left + card.offsetWidth / 2, rect.top + card.offsetHeight / 2);
+          card.classList.remove("hover-enabled");
+        }
+      }
+
+      ["mousedown", "touchstart"].forEach(evt =>
+        canvas.addEventListener(evt, e => {
+          drawing = true;
+          ctx.beginPath();
+          draw(e);
+        })
+      );
+
+      ["mousemove", "touchmove"].forEach(evt => canvas.addEventListener(evt, draw));
+      ["mouseup", "mouseleave", "touchend"].forEach(evt => (drawing = false));
     }
-  }
 
-  ["mousedown", "touchstart"].forEach(evt =>
-    canvas.addEventListener(evt, e => {
-      drawing = true;
-      ctx.beginPath();
-      draw(e);
-    })
-  );
-
-  ["mousemove", "touchmove"].forEach(evt => canvas.addEventListener(evt, draw));
-  ["mouseup", "mouseleave", "touchend"].forEach(evt => (drawing = false));
-}
-
-cardData.forEach(createScratchCard);
-</script>
+    cardData.forEach(createScratchCard);
+  </script>
 </body>
 </html>
